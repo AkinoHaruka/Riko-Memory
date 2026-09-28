@@ -30,4 +30,4 @@ The token file must remain outside Git and outside the plugin package. Do not pu
 
 `riko-preset.patch.yml` inserts a new `preset-riko` declaration using the current upstream Minimal composition as its base, then appends the adapter row. It does not patch `preset-minimal`. The adapter module is loaded from `./dist/index.js` relative to the patch file. `dist/` is included so Git-subdirectory installation does not need to compile TypeScript or access this repository's local DSH checkout.
 
-The package was prepared against the checked-out DSH source at `21638c56315ae6a2b552d6091945d3144c9af32e`. DSH's package manager performs peer-version compatibility checks at install/composition time.
+The package API and peer-version range are checked against DSH `0.2.0-rc.1`, source commit `4878cdabd87d4041bdaff61d04c966883b9fd07a`. DSH's package manager checks `@deepseek-ai/dsh-*` peer ranges during bundle installation and composition; this package declares the matching `0.2.0-rc.1` range. The preset composition is also compared with the current upstream Minimal patch so its Riko layer stays compatible without changing Minimal.
