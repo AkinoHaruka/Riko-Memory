@@ -122,12 +122,12 @@ function wrapData(kind: string, text: string): string {
  * 取消；超时/离线/取消不注入、不缓存旧正文（删除/改版下一步生效）；空正文
  * 不产生空 section。
  */
+/** 部署级稳定 agent ID（doc6/03 §1）；空则回退会话 ID（人格按会话隔离）。 */
 export function makeSoulAssembleHook(
   client: MemoryClient,
   logger: Logger,
   soulTimeoutMs: number,
   disabled: () => boolean,
-  /** 部署级稳定 agent ID（doc6/03 §1）；空则回退会话 ID（人格按会话隔离）。 */
   agentName: string,
 ) {
   return async function soulAssemble(
@@ -176,10 +176,10 @@ export function makeSoulAssembleHook(
  * 空 query 仍取 resident；resident/retrieved 非空正文各成一条独立、有来源的
  * user-role 消息前插在原始用户正文之前；离线跳过注入，跟随 DSH signal 取消；同 decision 去重。
  */
+/** 部署级稳定 agent ID（doc6/03 §1）；空则回退会话 ID。 */
 export function makeBundleHook(
   client: MemoryClient,
   logger: Logger,
-  /** 部署级稳定 agent ID（doc6/03 §1）；空则回退会话 ID。 */
   agentName: string,
 ) {
   return async function bundlePreStep(
