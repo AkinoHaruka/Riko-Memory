@@ -20,16 +20,37 @@ export interface AdapterConfig {
   captureEnabled: boolean;
   /** pre-step 自动注入。默认 true。 */
   injectionEnabled: boolean;
-  /** 注册五个记忆工具。默认 true。 */
+  /** 注册用户记忆工具。默认 true。Dream 子 Agent 不使用此工具集。 */
   toolsEnabled: boolean;
   /** 本地 spool 上限（events+receipts 总保留量）。默认 100 MiB。 */
   spoolLimitBytes: number;
+  /**
+   * D6 v6 注入总开关（doc6/06 §1）：Soul system section + context/bundle 前插。
+   * 默认 false；启用时启动握手核 capability `context_bundle_v1`，且不再注册旧
+   * compose 注入（不同一步双调，doc6/06 §3）。
+   */
+  contextBundleEnabled: boolean;
+  /**
+   * 握手缺 capability 时的策略：true=拒绝装载（fail loud，不落回旧模式）；
+   * false=停用 v6 注入并连旧注入一并停用，报 error 诊断（不静默）。
+   */
+  requireContextBundle: boolean;
+  /** GET /v1/soul 时限（doc6/06 §3：默认 300ms）。 */
+  soulTimeoutMs: number;
+  /**
+   * 部署级稳定 agent ID（doc6/03 §1「本进程配置的宿主 Agent ID」）。Soul 按
+   * (tenant,user,agent_id) 隔离，DSH 的 agent.id 是随机会话 ID（session-*），
+   * 跨会话不稳。启用 v6 context bundle 时必须配置稳定值（如 'agent-a'）；
+   * 不允许回退到随机会话 ID，避免 Soul 随会话漂移。
+   */
+  agentName: string;
 }
 
 const DEFAULT_MEMORY_URL = "http://127.0.0.1:8791";
 const DEFAULT_COMPOSE_TIMEOUT_MS = 500;
 const DEFAULT_WRITE_TIMEOUT_MS = 3000;
 const DEFAULT_SPOOL_LIMIT_BYTES = 100 * 1024 * 1024;
+const DEFAULT_SOUL_TIMEOUT_MS = 300;
 const HOST_ID_MAX_CHARS = 256;
 
 export function loadConfig(raw: unknown): AdapterConfig {
@@ -44,6 +65,12 @@ export function loadConfig(raw: unknown): AdapterConfig {
   const hostId = strOr(r.hostId, "");
   if (hostId.length === 0) throw new Error("hostId 必填：当前 DSH 安装的稳定来源 ID（非空、非秘密、重启不变）");
   if (hostId.length > HOST_ID_MAX_CHARS) throw new Error(`hostId 最长 ${HOST_ID_MAX_CHARS} 字符`);
+  const contextBundleEnabled = boolOr(r.contextBundleEnabled, false);
+  const agentName = strOr(r.agentName, "").trim();
+  if (contextBundleEnabled && agentName.length === 0) {
+    throw new Error("contextBundleEnabled=true 时必须配置稳定 agentName，Soul 不能使用随机会话 ID");
+  }
+  if (agentName.length > HOST_ID_MAX_CHARS) throw new Error(`agentName 最长 ${HOST_ID_MAX_CHARS} 字符`);
   return {
     memoryUrl,
     userTokenFile,
@@ -55,6 +82,10 @@ export function loadConfig(raw: unknown): AdapterConfig {
     injectionEnabled: boolOr(r.injectionEnabled, true),
     toolsEnabled: boolOr(r.toolsEnabled, true),
     spoolLimitBytes: positiveIntOr(r.spoolLimitBytes, DEFAULT_SPOOL_LIMIT_BYTES, "spoolLimitBytes"),
+    contextBundleEnabled,
+    requireContextBundle: boolOr(r.requireContextBundle, false),
+    soulTimeoutMs: positiveIntOr(r.soulTimeoutMs, DEFAULT_SOUL_TIMEOUT_MS, "soulTimeoutMs"),
+    agentName,
   };
 }
 
