@@ -28,7 +28,7 @@ The token file must remain outside Git and outside the plugin package. Do not pu
 
 ## Riko-App API Bridge
 
-The Android app's HTTP bridge is a separate DSH bundle in the repository's `riko-app-bridge/` directory. Install it independently from this memory adapter. It owns the `/riko-app-api/v1` routes, model settings proxy, app-only bearer token, and Riko-App session registry. See `../../../riko-app-bridge/README.md` for installation and configuration. Installing this memory bundle alone does not install or activate the Bridge.
+The Riko App HTTP Bridge is maintained as a separate project and repository: [Riko-App-Bridge](https://github.com/AkinoHaruka/Riko-App-Bridge). It owns the `/riko-app-api/v1` routes, model settings proxy, app-only bearer token, and Riko-App session registry. Install it separately; this memory bundle does not install or activate it.
 
 ## Package contents
 

@@ -9,7 +9,7 @@ Rust 优先的通用 Agent 长期记忆内核：同一用户的多个 Agent 默�
 | Rust 确定性检查 | ✅ 当前工作区 `cargo fmt --all -- --check`、`cargo test --workspace`、`cargo build --workspace` 通过；schema 13 |
 | DSH 宿主 | ✅ D6-11—D6-15 在官方 DSH + 固定响应中验证 Dream child、Rust receipt、主题页创建/更新；DSH 0.2 bundle 安装与配置预览通过，插件完整激活和 memoryd 连接未验证 |
 | 真实模型 | ⚠️ 有历史小样本；D6-11—D6-15 新 child 流程、总体写入/召回质量及回答利用率未验收 |
-| Android 模型设置 | ⚠️ 本地 Bridge API、模拟器 debug APK 与确定性接口测试已完成；生产 DSH 主机是否部署新路由未验证 |
+| Riko App Bridge | 独立项目：[Riko-App-Bridge](https://github.com/AkinoHaruka/Riko-App-Bridge)；生产 DSH 主机部署状态需单独核实 |
 | 部署与用户数据 | ⚠️ 用户库与生产主机未通过本次代码发布升级或部署 |
 
 ## 记忆行为
@@ -86,7 +86,7 @@ TypeScript 适配器（Cordis 插件与 DSH bundle）。D6 child/hook 闭环曾�
 
 运行时行为：事件先落本地 spool（`spoolDir/events.jsonl`，追加 + fsync，100 MiB 上限）再异步发送；内核离线时 DSH 对话不受影响，恢复后启动重放按幂等键重发（同键返回既有 evidence_id）。D6 还提供稳定 Agent Soul/Resident 注入、受限 Dream child 读取与 Rust 裁决、来源校验的主题页整理。
 
-Riko-App HTTP Bridge 是独立 DSH bundle，源码位于仓库根目录的 `riko-app-bridge/`，不属于本记忆适配器。它的模型设置接口映射到 DSH `settings`、`credentials` 和 `llm.discoverModels`：密钥只写入 DSH credentials，不由 Bridge 回读。Android 设置页已接入提供商密钥写入/删除、自定义 OpenAI/Anthropic 兼容提供商和模型发现；生产部署状态需按目标主机实际版本另行确认。
+Riko-App HTTP Bridge 是独立项目与 GitHub 仓库：[Riko-App-Bridge](https://github.com/AkinoHaruka/Riko-App-Bridge)。它与记忆内核分开发布、分开安装。
 
 ## 安全边界
 

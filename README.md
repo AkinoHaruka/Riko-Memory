@@ -1,13 +1,12 @@
 # Riko-Memory
 
-Rust 优先的 Agent 长期记忆内核，以及面向 DeepSeek Harness 的两个可独立安装 bundle。
+Rust 优先的 Agent 长期记忆内核及其面向 DeepSeek Harness 的独立记忆 bundle。
 
 ## Packages
 
 - [Rust memory kernel and DSH memory bundle](agent-memory/README.md) — `memoryd`、SQLite 存储、记忆协议和 `@agent-memory/dsh-adapter`。
-- [Riko App Bridge](riko-app-bridge/README.md) — 独立的 `@riko/riko-app-api` DSH bundle，提供 Riko Android app 使用的 API 与模型设置接线。
 
-两个 DSH bundle 可以安装在同一个 profile 中，安装与配置步骤分别见各自 README。Bridge 不会自动安装或启用记忆适配器。
+记忆 DSH bundle 的安装与配置步骤见其 README。Riko App Bridge 作为独立项目维护，不包含在本仓库。
 
 ## Repository scope
 

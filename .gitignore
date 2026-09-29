@@ -13,8 +13,6 @@ node_modules/
 # Git-subdirectory bundles must ship their prebuilt DSH Host code.
 !agent-memory/adapters/dsh/dist/
 !agent-memory/adapters/dsh/dist/**
-!riko-app-bridge/dist/
-!riko-app-bridge/dist/**
 *.db
 *.db-wal
 *.db-shm
