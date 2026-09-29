@@ -1,0 +1,39 @@
+# memoryd 非秘密配置示例（doc/09）。令牌与模型密钥严禁写入本文件。
+
+listen_addr = "127.0.0.1:8791"
+db_path = "data/agent-memory.db"
+migrations_dir = "migrations"
+
+# ---- 提取模型（OpenAI 兼容端点；未配置则不启动提取 worker，手工记忆与搜索仍可用）----
+# v2（doc2/05 §2）：model_endpoint 必须是完整 Chat Completions URL（含路径），支持 https:// 与域名；
+# 启动时校验 scheme=http/https、主机与路径明确；空密钥默认拒绝，确需无密钥端点时显式置 true。
+# model_endpoint = "https://api.example.com/v1/chat/completions"
+# model_name = "qwen2.5:7b"
+# model_key_file = "secrets/model.key"   # 文件内容为一行密钥；密钥不进配置、不进日志、不进 Prompt
+# model_allow_empty_key = false
+# model_max_tokens = 1024                # 单次生成上限；推理型 provider 无上限输出会拖垮提取
+# model_timeout_secs = 30                # 单次模型调用超时（默认 30）
+# model_extra_json = { enable_thinking = false }   # provider 专有开关，顶层合并进请求体
+
+# ---- D6-8 语义支路（doc6/04 §2：全部显式配置；未配置即 disabled，只做词法）----
+# embedding 为单独配置的 OpenAI 兼容 /embeddings 端点（完整 URL，不猜路径）。
+# embedding_endpoint = "https://api.example.com/v1/embeddings"
+# embedding_model = "bge-m3"
+# embedding_key_file = "secrets/embedding.key"
+# embedding_dimensions = 1024            # 预期维度；响应维度不符即失败
+# embedding_timeout_secs = 30            # provider 请求保护超时；查询不另设延迟预算
+# semantic_min_similarity = 0.3           # 在线向量候选余弦下限（含边界，范围 0..1）
+# reranker 须单独配置专用 rerank 端点（Jina/Cohere 兼容形状）；不配则保留 RRF 顺序。
+# rerank_endpoint = "https://api.example.com/v1/rerank"
+# rerank_model = "bge-reranker-v2-m3"
+# rerank_key_file = "secrets/rerank.key"
+# episode Retrieved 排序的 recency 模式：linear|exponential|none（默认 linear，doc6/04 §3.1）。
+# recency_mode = "linear"
+
+# ---- D6 Auto Dream（doc6/10）：默认启用；关闭只停止自动调度，不清除已持久作业 ----
+[dream]
+enabled = true
+
+# ---- 运行限额（首版工程默认值，见 crates/memory-contract/src/lib.rs 的版本化常量）----
+# compose_timeout_ms = 500
+# spool_limit_mb = 100

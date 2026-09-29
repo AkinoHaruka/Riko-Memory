@@ -1,0 +1,13 @@
+target/
+dist/
+# The DSH Git-subdirectory bundle requires prebuilt output.
+!adapters/dsh/dist/
+!adapters/dsh/dist/**
+node_modules/
+data/
+spool/
+*.db
+*.db-wal
+*.db-shm
+*.token
+secrets/
